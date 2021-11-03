@@ -1,16 +1,16 @@
 import config from 'config';
 import path from 'path';
 import { ConnectionOptions } from 'typeorm';
-// import { dbConfig } from '@interfaces/db.interface';
+import { dbConfig } from '@interfaces/db.interface';
 
-// const { host, user, password, database }: dbConfig = config.get('dbConfig');
+const { host, user, password, database }: dbConfig = config.get('dbConfig');
 export const dbConnection: ConnectionOptions = {
   type: 'postgres',
-  host: 'postgres',
+  host: host,
   port: 5432,
-  username: 'postgres',
-  password: 'postgres',
-  database: 'currency',
+  username: user,
+  password: password,
+  database: database,
   synchronize: true,
   logging: false,
   entities: [path.join(__dirname, '../**/*.entity{.ts,.js}')],
