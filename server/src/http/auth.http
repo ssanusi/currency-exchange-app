@@ -1,0 +1,11 @@
+# auth API
+
+###
+# baseURL
+@baseURL = http://api.exchangeratesapi.io/v1/latest?access_key=de28aa53248118e1fd61a185266ad803&symbols=USD,KES&format=1
+
+
+GET {{baseURL}}/
+Content-Type: application/json
+
+

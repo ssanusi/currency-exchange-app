@@ -1,0 +1,21 @@
+{
+    "env": "development",
+    "dbConfig": {
+        "host": "localhost",
+        "user": "postgres",
+        "password": "postgres",
+        "database": "currency"
+    },
+    "secretKey": "secretKey",
+    "log": {
+        "format": "dev",
+        "dir": "../logs"
+    },
+    "cors": {
+        "origin": true,
+        "credentials": true
+    },
+    "currency": {
+        "currencyExchangeUrl" : "https://api.exchangeratesapi.io/v1/"
+    }
+}
