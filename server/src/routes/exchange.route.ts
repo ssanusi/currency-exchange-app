@@ -17,6 +17,7 @@ class CurrencyExchangeRoute implements Routes {
   private initializeRoutes() {
     this.router.put(`${this.path}/update-rate`, this.exchangeController.updateCurrency);
     this.router.get(`${this.path}/historic/:date`, validationMiddleware(GetHistoricRateDto, 'params'), this.exchangeController.getHistoricCurrency);
+    this.router.get(`${this.path}/latest`, this.exchangeController.getLatestRate);
     this.router.post(`${this.path}/latest/convert`, validationMiddleware(ConvertCurrencyDto, 'body'), this.exchangeController.convertCurrency);
     this.router.get(`${this.path}/timeseries/:start_date/:end_date`, this.exchangeController.getTimeSeriesCurrency);
   }

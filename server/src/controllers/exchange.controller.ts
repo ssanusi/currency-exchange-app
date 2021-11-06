@@ -44,6 +44,15 @@ class CurrencyExchangeController {
       next(error);
     }
   };
+
+  public getLatestRate = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const rate = await this.currencyExchangeService.getLatest();
+      res.status(200).json({ ...rate, message: `Latest Rates` });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export default CurrencyExchangeController;

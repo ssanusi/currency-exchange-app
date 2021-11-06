@@ -1,7 +1,7 @@
 import { ExchangeRateEntity } from '@/entity/exchange-rate.entity';
 import { ExchangeRate } from '@/interfaces/exchange-rate.interface';
 import axios, { AxiosResponse, AxiosInstance } from 'axios';
-import { getRepository } from 'typeorm';
+import { getRepository, MoreThanOrEqual, LessThanOrEqual, In, Between} from 'typeorm';
 
 class CurrencyExchangeService {
   currencyExchangeBaseUrl = process.env.currencyExchangeBaseUrl;
@@ -79,8 +79,19 @@ class CurrencyExchangeService {
         rates: value,
       });
     });
-    const exchange = exchangeRateRepository.save(ratesArray);
-    return exchange;
+    const exchangeRates = await exchangeRateRepository.save(ratesArray);
+    return exchangeRates;
+  }
+
+  public async getLatest(): Promise<any> {
+    const exchangeRateRepository = getRepository(this.exchangeRate);
+    const rates = await exchangeRateRepository.find({
+      order: {
+        date: 'DESC',
+      },
+      take: 1,
+    });
+    return rates[0];
   }
 }
 

@@ -1,7 +1,7 @@
 import { IsNumber, IsString, Matches } from 'class-validator';
 
 export enum CURRENCY {
-  USD,
+  EUR,
   KES,
 }
 export class ConvertCurrencyDto {
