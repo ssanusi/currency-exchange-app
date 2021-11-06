@@ -19,7 +19,7 @@ export interface Rate {
    KES: number 
 }
 
-export interface UpdateRateResponse {
+export interface RateResponse {
     base_currency: string,
     date: string,
     rates: Rate,
@@ -29,13 +29,6 @@ export interface UpdateRateResponse {
     message: string
 }
 
-
-export interface HistoricRateResponse {
-  first_name: string;
-  last_name: string;
-  email: string;
-  phone: string;
-}
 
 export interface TimeSeriesRateInput {
   start_date: string;
@@ -50,31 +43,40 @@ const baseQuery = fetchBaseQuery({
 export const currencyExchangeApi = createApi({
     reducerPath: 'CURRENCY_EXCHANGE_API',
     baseQuery: baseQuery,
+    tagTypes: ['Rate'],
     endpoints: (builder) => ({
-        updateRates: builder.mutation<UpdateRateResponse, void>({
-             query: () => ({ url: '/exchange/update-rate', method: 'PUT' }),
+        updateRates: builder.mutation<RateResponse, void>({
+            query: () => ({ url: '/exchange/update-rate', method: 'PUT' }),
+            invalidatesTags: (result, error) => [{ type: 'Rate' }],
         }),
-        convertCurrency: builder.query<ConvertCurrencyResponse, ConvertCurrencyData>({
+        convertCurrency: builder.mutation<ConvertCurrencyResponse, ConvertCurrencyData>({
             query: ({ value, to }) => ({
                 url: `/exchange/latest/convert`,
                 method: 'POST',
                 body: { value: value, to: to },
             }),
         }),
-        getHistoricRate: builder.query<HistoricRateResponse, string>({
+        getHistoricRate: builder.query<RateResponse, string>({
             query: (date) => ({
                 url: `/exchange/historic/${date}`,
                 method: 'GET'
             }),
         }),
-        getTimeSeriesRate: builder.query<HistoricRateResponse, TimeSeriesRateInput>({
+        getTimeSeriesRate: builder.query<RateResponse, TimeSeriesRateInput>({
             query: ({ start_date, end_date }) => ({
                 url: `/exchange/timeseries/${start_date}/${end_date}`,
                 method: 'GET'
             }),
         }),
+        getLatestRate: builder.query<RateResponse, void>({
+            query: () => ({
+                url: `/exchange/latest`,
+                method: 'GET'
+            }),
+            providesTags: (result, error) => [{ type: 'Rate' }],
+        }),
     })
 })
 
 
- export const { useUpdateRatesMutation, useConvertCurrencyQuery, useGetHistoricRateQuery, useGetTimeSeriesRateQuery } = currencyExchangeApi
+ export const { useUpdateRatesMutation, useConvertCurrencyMutation, useGetHistoricRateQuery, useGetTimeSeriesRateQuery, useGetLatestRateQuery } = currencyExchangeApi
