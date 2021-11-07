@@ -35,11 +35,21 @@ class CurrencyExchangeController {
     }
   };
 
-  public getTimeSeriesCurrency = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  public updateTimeSeriesCurrency = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { start_date, end_date } = req.params;
-      const rate = await this.currencyExchangeService.getTimeSeries(start_date, end_date);
+      const rate = await this.currencyExchangeService.updateTimeSeries(start_date, end_date);
       res.status(200).json({ ...rate, message: `Currency Rates from ${start_date} to ${end_date}` });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public getTimeSeriesCurrency = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { start_date, end_date } = req.query;
+      const rates = await this.currencyExchangeService.getTimeSeries(start_date, end_date);
+      res.status(200).json({ rates, message: `Currency Rates from ${start_date} to ${end_date}` });
     } catch (error) {
       next(error);
     }
@@ -49,6 +59,16 @@ class CurrencyExchangeController {
     try {
       const rate = await this.currencyExchangeService.getLatest();
       res.status(200).json({ ...rate, message: `Latest Rates` });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public getCurrencyAnalytics = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { start_date, end_date, currency } = req.query;
+      const rates = await this.currencyExchangeService.getCurrencyAnalytics(start_date, end_date, currency);
+      res.status(200).json({ rates, message: `Currency Rates from ${start_date} to ${end_date}` });
     } catch (error) {
       next(error);
     }

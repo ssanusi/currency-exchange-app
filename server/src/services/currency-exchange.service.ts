@@ -1,7 +1,8 @@
 import { ExchangeRateEntity } from '@/entity/exchange-rate.entity';
 import { ExchangeRate } from '@/interfaces/exchange-rate.interface';
 import axios, { AxiosResponse, AxiosInstance } from 'axios';
-import { getRepository, MoreThanOrEqual, LessThanOrEqual, In, Between} from 'typeorm';
+import { getRepository, Between } from 'typeorm';
+import moment from 'moment';
 
 class CurrencyExchangeService {
   currencyExchangeBaseUrl = process.env.currencyExchangeBaseUrl;
@@ -68,7 +69,7 @@ class CurrencyExchangeService {
     return exchange;
   }
 
-  public async getTimeSeries(start_date: string, end_date: string): Promise<ExchangeRate[]> {
+  public async updateTimeSeries(start_date: string, end_date: string): Promise<ExchangeRate[]> {
     const exchangeRateRepository = getRepository(this.exchangeRate);
     const { data } = await this.getTimeSeriesRate(start_date, end_date);
     const ratesArray = [];
@@ -92,6 +93,38 @@ class CurrencyExchangeService {
       take: 1,
     });
     return rates[0];
+  }
+
+  public async getTimeSeries(start_date, end_date): Promise<ExchangeRate[]> {
+    const exchangeRateRepository = getRepository(this.exchangeRate);
+    const rates = await exchangeRateRepository.find({
+      where: {
+        date: Between(new Date(start_date), new Date(end_date)),
+      },
+      order: {
+        date: 'DESC',
+      },
+    });
+    return rates;
+  }
+
+  public async getCurrencyAnalytics(start_date, end_date, currency): Promise<any> {
+    const exchangeRateRepository = getRepository(this.exchangeRate);
+    const rates = await exchangeRateRepository.find({
+      where: {
+        date: Between(new Date(start_date), new Date(end_date)),
+      },
+      order: {
+        date: 'ASC',
+      },
+    });
+    const ratesAnalytics = rates.map(rate => {
+      return {
+        date: moment(rate.date).format('YYYY-MM-DD'),
+        rate: rate.rates[currency],
+      };
+    });
+    return ratesAnalytics;
   }
 }
 

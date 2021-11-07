@@ -8,46 +8,53 @@ import {
   Tooltip,
   Legend
 } from "recharts";
-
-const data = [
-  { date: '2020-10-01', rates: 0.851444 },
-  { date: '2020-10-02', rates: 0.853468 },
-  { date: '2020-10-03', rates: 0.853457 },
-  { date: '2020-10-04', rates: 0.853599 },
-  { date: '2020-10-05', rates: 0.848319 },
-  { date: '2020-10-06', rates: 0.8522 },
-  { date: '2020-10-07', rates: 0.849694 },
-  { date: '2020-10-08', rates: 0.850026 },
-  { date: '2020-10-09', rates: 0.845359 },
-  { date: '2020-10-10', rates: 0.845248 },
-  { date: '2020-10-11', rates: 0.84624 },
-  { date: '2020-10-12', rates: 0.846445 },
-  { date: '2020-10-13', rates: 0.851516 },
-  { date: '2020-10-14', rates: 0.851586 },
-  { date: '2020-10-15', rates: 0.854281 },
-  { date: '2020-10-16', rates: 0.8535 },
-  { date: '2020-10-17', rates: 0.853606 },
-  { date: '2020-10-18', rates: 0.853756 },
-  { date: '2020-10-19', rates: 0.849732 },
-  { date: '2020-10-20', rates: 0.845445 },
-  { date: '2020-10-21', rates: 0.843206 },
-  { date: '2020-10-22', rates: 0.845805 },
-  { date: '2020-10-23', rates: 0.843149 },
-  { date: '2020-10-24', rates: 0.842993 },
-  { date: '2020-10-25', rates: 0.844445 },
-  { date: '2020-10-26', rates: 0.84692 },
-  { date: '2020-10-27', rates: 0.848863 },
-  { date: '2020-10-28', rates: 0.851165 },
-  { date: '2020-10-29', rates: 0.856915 },
-  { date: '2020-10-30', rates: 0.8565 }
-];
+import { useGetCurrencyAnalyticsQuery } from '../../service/currency-exchange';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import dayjs from 'dayjs'
 
 export default function Chart() {
+  const [currency,  setCurrency] = React.useState<string>('EUR');
+  const [openFrom, setOpen] = React.useState(false);
+
+  const handleChange = (event: SelectChangeEvent<typeof currency>) => {
+    setCurrency(event.target.value);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+  const end_date = dayjs().format('YYYY-MM-DD');
+  const start_date = dayjs().subtract(30, 'days').format('YYYY-MM-DD');
+  const { data } = useGetCurrencyAnalyticsQuery({ start_date, end_date, currency });
   return (
+    <>
+    <FormControl sx={{ ml: 10, width: 130 }}>
+        <InputLabel id="demo-controlled-open-select-label">CURRENCY</InputLabel>
+        <Select
+          labelId="demo-controlled-open-select-label"
+          id="demo-controlled-open-select"
+          open={openFrom}
+          onClose={handleClose}
+          onOpen={handleOpen}
+          value={currency}
+          label="CURRENCY"
+          onChange={handleChange}
+            >
+          <MenuItem value={'EUR'}>USD/EUR</MenuItem>
+          <MenuItem value={'KES'}>USD/KES</MenuItem>
+        </Select>
+    </FormControl>
     <LineChart
       width={900}
       height={500}
-      data={data}
+      data={data?.rates}
       margin={{
         top: 5,
         right: 30,
@@ -60,7 +67,8 @@ export default function Chart() {
       <YAxis />
       <Tooltip />
       <Legend />
-      <Line type="monotone" dataKey="rates" stroke="#82ca9d" />
-    </LineChart>
+      <Line type="monotone" dataKey="rate" stroke="#82ca9d" />
+      </LineChart>
+    </>
   );
 }

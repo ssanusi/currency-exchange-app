@@ -12,8 +12,7 @@ const App = () => {
       <DenseAppBar />
       <Box sx={{ width: '100vw', height: '90vh', display: 'flex'}}>
         <Box sx={{ width: '30vw', height: '90vh', display: 'flex', alignItems: 'center', flexDirection: 'column', p: 1 }}>
-          <Box sx={{ m: 1, width: '100%', display: 'flex', justifyContent: 'flex-start', flexDirection: 'column', alignItems: 'center'}}>
-         
+          <Box sx={{ m: 1, width: '100%', display: 'flex', justifyContent: 'flex-start', flexDirection: 'column', alignItems: 'center'}}> 
             <RateBoard />
           </Box>
           <Typography variant="h6" component="h2" sx={{ p: 1 }}>
@@ -21,7 +20,7 @@ const App = () => {
           </Typography>
           <CurrencyConverter />
         </Box>
-        <Box sx={{ m: 2 }}>
+        <Box sx={{ m: 2 , display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
           <Chart />
         </Box>
       </Box>
